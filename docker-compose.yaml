@@ -1,0 +1,50 @@
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+  prometheus:
+    image: prom/prometheus:v2.54.1
+    volumes:
+      - ./infra/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - pcap-app
+
+  pcap-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - PCAP_FILE=/data/sample.pcap
+      - METRICS_PORT=9100
+      - ELASTIC_URL=http://elasticsearch:9200
+      - ELASTIC_INDEX=pcap-packets
+    volumes:
+      - ./examples:/data:ro
+    ports:
+      - "9100:9100"
+    depends_on:
+      - elasticsearch
+
+volumes:
+  esdata:
+

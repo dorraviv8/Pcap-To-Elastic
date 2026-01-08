@@ -1,0 +1,4 @@
+scapy==2.5.0
+elasticsearch==8.13.2
+prometheus-client==0.20.0
+
