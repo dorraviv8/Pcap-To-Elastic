@@ -1,5 +1,4 @@
 
-````markdown
 # PCAP → Elasticsearch + Prometheus Metrics
 
 This project implements a small service that:
