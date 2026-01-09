@@ -1,5 +1,5 @@
 
-# PCAP → Elasticsearch + Prometheus Metrics
+# PCAP TO Elasticsearch + Prometheus Metrics
 
 This project implements a small service that:
 1. Reads a `.pcap` file and processes each packet
