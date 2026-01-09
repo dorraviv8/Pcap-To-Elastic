@@ -182,5 +182,3 @@ Potential improvements:
 * Unit tests for `packet_to_document()` and writer retry logic
 
 ````
-
----
