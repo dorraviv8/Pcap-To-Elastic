@@ -1,35 +1,3 @@
-### מפת פרויקט (Project Map)
-
-ככה החלקים המרכזיים בפרויקט “מדברים” אחד עם השני:
-
-**זרימת עבודה כללית**
-
-1. `main.py` הוא ה־**entrypoint** (מה שרץ בתוך הקונטיינר).
-2. `main.py` קורא packets מה־PCAP דרך `pcap_reader.iter_packets()`
-3. לכל packet הוא בונה document אחיד דרך `pcap_reader.packet_to_document()`
-4. הוא מעדכן **מטריקות** דרך האובייקטים שהוגדרו ב־`metrics.py`
-5. הוא כותב את ה־document ל־Elasticsearch דרך `elastic_writer.write_document()` (כולל retry)
-6. Prometheus מגרד את `/metrics` של האפליקציה (פורט 9100) לפי `infra/prometheus/prometheus.yaml`
-7. Kibana מאפשר לראות ולשאול את הנתונים שנכתבו ל־Elasticsearch
-
-**מי תלוי במי**
-
-* `main.py` תלוי ב:
-
-  * `pcap_reader.py` (קריאה + הפיכת packet ל-document)
-  * `metrics.py` (Counters)
-  * `elastic_writer.py` (כתיבה ל־Elastic)
-  * `prometheus_client` (שרת /metrics)
-* `pcap_reader.py` תלוי ב־`scapy`
-* `elastic_writer.py` תלוי ב־`elasticsearch` (Python client)
-* `metrics.py` תלוי ב־`prometheus_client`
-* `docker-compose.yaml` תלוי ב־Dockerfile של האפליקציה + images רשמיים של Elastic/Kibana/Prometheus
-
----
-
-## README.md מעודכן (תוכן מלא להדבקה)
-
-הדבק/החלף את `README.md` בשורש הפרויקט בתוכן הבא:
 
 ````markdown
 # PCAP → Elasticsearch + Prometheus Metrics
