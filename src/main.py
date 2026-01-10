@@ -51,10 +51,6 @@ def main():
     metrics_port = int(os.getenv("METRICS_PORT", "9100"))
     max_packets = read_max_packets()
 
-    es = create_es_client()
-    index_name = get_index_name()
-    logger.info("Elasticsearch target: %s | index: %s", os.getenv("ELASTIC_URL"), index_name)
-
     # Observability server (metrics + health + readiness)
     def readiness_check():
         ok, reason = check_elasticsearch(es, timeout_seconds=1.0)
