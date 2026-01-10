@@ -1,5 +1,6 @@
 import os
 import time
+import logging
 
 from prometheus_client import start_http_server
 
@@ -13,22 +14,29 @@ from metrics import (
 from elastic_writer import create_es_client, get_index_name, write_document
 
 
-def _read_max_packets() -> int | None:
-    """
-    Reads MAX_PACKETS from environment.
+def setup_logging() -> logging.Logger:
+    level_name = os.getenv("LOG_LEVEL", "INFO").strip().upper()
+    level = getattr(logging, level_name, logging.INFO)
 
-    Returns:
-        int: maximum packets to process
-        None: no limit (process full PCAP)
-    """
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s %(levelname)s %(name)s - %(message)s",
+    )
+
+    logger = logging.getLogger("pcap-app")
+    logger.info("Logging initialized (LOG_LEVEL=%s)", level_name)
+    return logger
+
+
+def read_max_packets() -> int | None:
     raw = os.getenv("MAX_PACKETS", "").strip()
     if not raw:
         return None
 
     try:
         value = int(raw)
-    except ValueError:
-        raise ValueError(f"MAX_PACKETS must be an integer, got: {raw!r}")
+    except ValueError as e:
+        raise ValueError(f"MAX_PACKETS must be an integer, got: {raw!r}") from e
 
     if value <= 0:
         raise ValueError(f"MAX_PACKETS must be > 0, got: {value}")
@@ -37,22 +45,25 @@ def _read_max_packets() -> int | None:
 
 
 def main():
+    logger = setup_logging()
+
     pcap_path = os.getenv("PCAP_FILE", "examples/sample.pcap")
     metrics_port = int(os.getenv("METRICS_PORT", "9100"))
-    max_packets = _read_max_packets()
+    max_packets = read_max_packets()
 
     start_http_server(metrics_port)
-    print(f"Metrics server running on http://localhost:{metrics_port}/metrics")
-    print(f"Reading PCAP: {pcap_path}")
+    logger.info("Metrics server running on http://localhost:%s/metrics", metrics_port)
+    logger.info("Reading PCAP: %s", pcap_path)
+
     if max_packets is None:
-        print("MAX_PACKETS: not set (processing full PCAP)")
+        logger.info("MAX_PACKETS: not set (processing full PCAP)")
     else:
-        print(f"MAX_PACKETS: {max_packets}")
+        logger.info("MAX_PACKETS: %s", max_packets)
 
     # Elasticsearch setup
     es = create_es_client()
     index_name = get_index_name()
-    print(f"Elasticsearch target: {os.getenv('ELASTIC_URL')} | index: {index_name}")
+    logger.info("Elasticsearch target: %s | index: %s", os.getenv("ELASTIC_URL"), index_name)
 
     processed = 0
 
@@ -75,13 +86,11 @@ def main():
             pcap_elastic_write_total.labels(status="fail").inc()
 
         processed += 1
-
-        # Stop condition (only if MAX_PACKETS set)
         if max_packets is not None and processed >= max_packets:
             break
 
-    print(f"Done. Total packets processed: {processed}")
-    print("Entering idle mode (Ctrl+C to stop)...")
+    logger.info("Done. Total packets processed: %s", processed)
+    logger.info("Entering idle mode (Ctrl+C to stop)...")
 
     while True:
         time.sleep(5)
