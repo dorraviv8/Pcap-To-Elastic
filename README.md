@@ -1,18 +1,15 @@
 
 # PCAP TO Elasticsearch + Prometheus Metrics
 
-This project implements a small service that:
-1. Reads a `.pcap` file and processes each packet
-2. Writes one document per packet into Elasticsearch
-3. Exposes Prometheus metrics at `/metrics`
+# PCAP to Elasticsearch with Prometheus Metrics
 
-The goal is to demonstrate:
-- Basic networking understanding (packet fields extraction)
-- Clean, readable Python code
-- Observability thinking (metrics + clear errors)
-- Ability to integrate technologies (Scapy + Elasticsearch + Prometheus)
+A lightweight DevOps-oriented service that **parses a PCAP file**, writes each packet as a document into **Elasticsearch**, and exposes **Prometheus metrics** for observability.
 
----
+The project runs fully containerized using **Docker Compose** and includes:
+- Elasticsearch
+- Kibana
+- Prometheus
+- A custom Python PCAP processing service (`pcap-app`)
 
 ## Project Structure
 
