@@ -51,7 +51,7 @@ def write_document(
         except Exception as e:
             last_exc = e
             if attempt <= retries:
-                sleep_for = backoff_seconds * attempt  # backoff ליניארי פשוט
+                sleep_for = backoff_seconds * attempt  
                 logger.warning(
                     "Elasticsearch write failed (index=%s attempt=%d/%d). "
                     "Retrying in %.2fs. Error=%s",
@@ -63,7 +63,6 @@ def write_document(
                 )
                 time.sleep(sleep_for)
             else:
-                # ניסיון אחרון נכשל
                 logger.error(
                     "Elasticsearch write failed FINAL (index=%s attempts=%d). Error=%s",
                     index_name,
@@ -72,4 +71,15 @@ def write_document(
                 )
 
     return False
+
+def check_elasticsearch(es: Elasticsearch, timeout_seconds: float = 1.0) -> tuple[bool, str]:
+    """
+    Lightweight readiness check.
+    Returns (True, reason) if ES responds to ping; otherwise (False, error/reason).
+    """
+    try:
+        ok = es.ping(request_timeout=timeout_seconds)
+        return (ok, "ping_ok" if ok else "ping_failed")
+    except Exception as e:
+        return (False, repr(e))
 

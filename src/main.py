@@ -1,9 +1,7 @@
 import os
 import time
 import logging
-
-from prometheus_client import start_http_server
-
+from http_server import start_observability_server
 from pcap_reader import iter_packets, packet_to_document
 from metrics import (
     pcap_packets_total,
@@ -11,7 +9,7 @@ from metrics import (
     pcap_elastic_write_total,
     normalize_protocol,
 )
-from elastic_writer import create_es_client, get_index_name, write_document
+from elastic_writer import create_es_client, get_index_name, write_document, check_elasticsearch
 
 
 def setup_logging() -> logging.Logger:
@@ -53,7 +51,21 @@ def main():
     metrics_port = int(os.getenv("METRICS_PORT", "9100"))
     max_packets = read_max_packets()
 
-    start_http_server(metrics_port)
+    es = create_es_client()
+    index_name = get_index_name()
+    logger.info("Elasticsearch target: %s | index: %s", os.getenv("ELASTIC_URL"), index_name)
+
+    # Observability server (metrics + health + readiness)
+    def readiness_check():
+        ok, reason = check_elasticsearch(es, timeout_seconds=1.0)
+        return ok, {
+            "elasticsearch": {"ok": ok, "reason": reason},
+            "index": index_name,
+        }
+
+    start_observability_server(metrics_port, readiness_check)
+
+
     logger.info("Metrics server running on http://localhost:%s/metrics", metrics_port)
     logger.info("Reading PCAP: %s", pcap_path)
 
