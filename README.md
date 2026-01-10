@@ -18,6 +18,7 @@ Pcap-To_Elastic/
 │   ├── pcap_reader.py        # Reads packets (stream) and converts each packet to a document (dict)
 │   ├── elastic_writer.py     # Elasticsearch client + single-doc write with retry
 │   ├── metrics.py            # Prometheus counters definitions + protocol normalization
+│   ├── http_server.py        # Serves /metrics, /health, /ready on METRICS_PORT
 │   └── pcap_explore.py       # (Optional) exploration/debug script for PCAP (not required)
 │
 ├── examples/
