@@ -98,10 +98,17 @@ Open Prometheus UI: `http://localhost:9090`
 
 Try these queries:
 
-* `pcap_packets_total`
-* `pcap_bytes_total`
-* `pcap_elastic_write_total`
+Packets by protocol:
 
+sum by (protocol) (pcap_packets_total)
+
+Bytes by protocol:
+
+sum by (protocol) (pcap_bytes_total)
+
+Elastic write failures:
+
+pcap_elastic_write_total{status="fail"}
 ---
 
 ## Environment Variables
@@ -110,6 +117,8 @@ Try these queries:
 
 * `PCAP_FILE` – path to PCAP file inside the container
   Default (in compose): `/data/sample.pcap`
+  
+* `MAX_PACKETS – optional limit for number of packets to process (useful for demos/testing). If not set, processes the full PCAP.`
 
 ### Metrics
 
