@@ -59,6 +59,8 @@ This will start:
 * Kibana: `http://localhost:5601`
 * Prometheus: `http://localhost:9090`
 * App metrics: `http://localhost:9100/metrics`
+* App health: http://localhost:9100/health
+* App readiness: http://localhost:9100/ready
 
 ### 2) Verify metrics endpoint
 
