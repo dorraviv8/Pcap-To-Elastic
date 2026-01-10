@@ -39,6 +39,7 @@ services:
       - ELASTIC_URL=http://elasticsearch:9200
       - ELASTIC_INDEX=pcap-packets
       - MAX_PACKETS=10
+      - LOG_LEVEL=DEBUG
 
     volumes:
       - ./examples:/data:ro
