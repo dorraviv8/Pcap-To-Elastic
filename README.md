@@ -1,6 +1,4 @@
 
-# PCAP TO Elasticsearch + Prometheus Metrics
-
 # PCAP to Elasticsearch with Prometheus Metrics
 
 A lightweight DevOps-oriented service that **parses a PCAP file**, writes each packet as a document into **Elasticsearch**, and exposes **Prometheus metrics** for observability.
