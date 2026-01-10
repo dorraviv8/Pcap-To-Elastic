@@ -13,13 +13,41 @@ from metrics import (
 from elastic_writer import create_es_client, get_index_name, write_document
 
 
+def _read_max_packets() -> int | None:
+    """
+    Reads MAX_PACKETS from environment.
+
+    Returns:
+        int: maximum packets to process
+        None: no limit (process full PCAP)
+    """
+    raw = os.getenv("MAX_PACKETS", "").strip()
+    if not raw:
+        return None
+
+    try:
+        value = int(raw)
+    except ValueError:
+        raise ValueError(f"MAX_PACKETS must be an integer, got: {raw!r}")
+
+    if value <= 0:
+        raise ValueError(f"MAX_PACKETS must be > 0, got: {value}")
+
+    return value
+
+
 def main():
     pcap_path = os.getenv("PCAP_FILE", "examples/sample.pcap")
     metrics_port = int(os.getenv("METRICS_PORT", "9100"))
+    max_packets = _read_max_packets()
 
     start_http_server(metrics_port)
     print(f"Metrics server running on http://localhost:{metrics_port}/metrics")
     print(f"Reading PCAP: {pcap_path}")
+    if max_packets is None:
+        print("MAX_PACKETS: not set (processing full PCAP)")
+    else:
+        print(f"MAX_PACKETS: {max_packets}")
 
     # Elasticsearch setup
     es = create_es_client()
@@ -47,7 +75,9 @@ def main():
             pcap_elastic_write_total.labels(status="fail").inc()
 
         processed += 1
-        if processed >= 5:
+
+        # Stop condition (only if MAX_PACKETS set)
+        if max_packets is not None and processed >= max_packets:
             break
 
     print(f"Done. Total packets processed: {processed}")
