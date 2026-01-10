@@ -119,7 +119,7 @@ pcap_elastic_write_total{status="fail"}
 * `PCAP_FILE` – path to PCAP file inside the container
   Default (in compose): `/data/sample.pcap`
   
-* `MAX_PACKETS – optional limit for number of packets to process (useful for demos/testing). If not set, processes the full PCAP.`
+* `MAX_PACKETS` – optional limit for number of packets to process (useful for demos/testing). If not set, processes the full PCAP.
 
 ### Metrics
 
