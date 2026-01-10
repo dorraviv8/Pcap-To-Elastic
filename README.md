@@ -62,10 +62,12 @@ This will start:
 * App health: http://localhost:9100/health
 * App readiness: http://localhost:9100/ready
 
-### 2) Verify metrics endpoint
+### 2) Verify metrics, health and readiness endpoints
 
 ```bash
 curl -s http://localhost:9100/metrics | grep pcap_
+curl -i http://localhost:9100/health
+curl -i http://localhost:9100/ready
 ```
 
 Expected (example):
@@ -73,6 +75,8 @@ Expected (example):
 * `pcap_packets_total{protocol="tcp"} ...`
 * `pcap_bytes_total{protocol="tcp"} ...`
 * `pcap_elastic_write_total{status="success"} ...`
+* `/health returns 200 {"status":"ok"}`
+* `/ready returns 200 ... when Elasticsearch is reachable, otherwise 503 ...`
 
 ### 3) Verify documents in Elasticsearch
 
