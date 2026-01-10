@@ -22,6 +22,8 @@ def setup_logging() -> logging.Logger:
         level=level,
         format="%(asctime)s %(levelname)s %(name)s - %(message)s",
     )
+    logging.getLogger("urllib3").setLevel(logging.WARNING)
+    logging.getLogger("elastic_transport").setLevel(logging.WARNING)
 
     logger = logging.getLogger("pcap-app")
     logger.info("Logging initialized (LOG_LEVEL=%s)", level_name)
