@@ -99,15 +99,15 @@ Open Prometheus UI: `http://localhost:9090`
 Try these queries:
 
 Packets by protocol:
-```bash
+```
 sum by (protocol) (pcap_packets_total)
 ```
 Bytes by protocol:
-```bash
+```
 sum by (protocol) (pcap_bytes_total)
 ```
 Elastic write failures:
-```bash
+```
 pcap_elastic_write_total{status="fail"}
 ```
 ---
