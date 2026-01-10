@@ -123,9 +123,16 @@ pcap_elastic_write_total{status="fail"}
 
 ### Metrics
 
-* `METRICS_PORT` – port for `/metrics` endpoint
-  Default: `9100`
+`METRICS_PORT` – HTTP port used by the observability server
+Default: 9100
 
+The service exposes the following endpoints on the same port:
+
+`GET /metrics` – Prometheus metrics (scraped by Prometheus)
+
+`GET /health` – liveness check (returns 200 if the process is running)
+
+`GET /ready` – readiness check (returns 200 only if Elasticsearch is reachable, otherwise 503)
 ### Elasticsearch
 
 * `ELASTIC_URL` – Elasticsearch URL (e.g. `http://elasticsearch:9200`)
