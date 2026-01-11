@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Any, Dict, Iterator, Optional
 
+from datetime import datetime, timezone  # <-- ADDED
+
 from scapy.all import PcapReader
 from scapy.layers.inet import IP, TCP, UDP, ICMP
 
@@ -40,6 +42,11 @@ def packet_to_document(pkt: Any) -> Dict[str, Any]:
 
     doc: Dict[str, Any] = {
         "timestamp": timestamp,
+        "@timestamp": (
+            datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
+            if isinstance(timestamp, (int, float))
+            else None
+        ),  # <-- ADDED
         "src_ip": None,
         "dst_ip": None,
         "src_port": None,
