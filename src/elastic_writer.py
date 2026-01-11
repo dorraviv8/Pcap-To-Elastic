@@ -18,7 +18,7 @@ def create_es_client() -> Elasticsearch:
         logger.info("Creating Elasticsearch client with basic auth (url=%s)", url)
         return Elasticsearch(url, basic_auth=(username, password))
     else:
-        logger.info("Creating Elasticsearch client (url=%s) ללא auth", url)
+        logger.info("Creating Elasticsearch client (url=%s) without auth", url)
         return Elasticsearch(url)
 
 
