@@ -190,8 +190,6 @@ python src/main.py
 Potential improvements:
 
 * Use Elasticsearch bulk indexing instead of single-document writes
-* Add structured logging (JSON logs)
-* Better retry/backoff + dead-letter queue for failed writes
+* Better retry
 * Index naming by date (e.g. `pcap-packets-YYYY.MM.DD`)
-* Unit tests for `packet_to_document()` and writer retry logic
 
