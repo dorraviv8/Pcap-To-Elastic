@@ -144,7 +144,7 @@ A single packet is stored as one document with these fields:
 
 ```json
 {
-  "timestamp": 1767715400.385397,
+  "timestamp": "2026-01-07T12:03:20.385397+00:00",
   "src_ip": "192.168.1.10",
   "dst_ip": "10.0.0.5",
   "src_port": 12345,
@@ -152,6 +152,8 @@ A single packet is stored as one document with these fields:
   "l4_protocol": "tcp",
   "packet_length": 40
 }
+
+
 ```
 
 Notes:
