@@ -38,7 +38,7 @@ services:
       - METRICS_PORT=9100
       - ELASTIC_URL=http://elasticsearch:9200
       - ELASTIC_INDEX=pcap-packets
-      - MAX_PACKETS=10
+      - MAX_PACKETS=100
       - LOG_LEVEL=DEBUG
 
     volumes:

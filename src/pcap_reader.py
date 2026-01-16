@@ -1,9 +1,6 @@
 from __future__ import annotations
-
+from datetime import datetime, timezone
 from typing import Any, Dict, Iterator, Optional
-
-from datetime import datetime, timezone  # <-- ADDED
-
 from scapy.all import PcapReader
 from scapy.layers.inet import IP, TCP, UDP, ICMP
 
@@ -26,7 +23,6 @@ def safe_packet_length(pkt: Any) -> Optional[int]:
     except Exception:
         return None
 
-
 def packet_to_document(pkt: Any) -> Dict[str, Any]:
     """
     Convert a Scapy packet into a dict (document) aligned with assignment fields:
@@ -38,15 +34,15 @@ def packet_to_document(pkt: Any) -> Dict[str, Any]:
 
     Packets without IP/TCP/UDP are still returned with best-effort fields.
     """
-    timestamp = float(getattr(pkt, "time", None)) if getattr(pkt, "time", None) is not None else None
+    raw_ts = getattr(pkt, "time", None)
+    timestamp = (
+        datetime.fromtimestamp(float(raw_ts), tz=timezone.utc).isoformat()
+        if raw_ts is not None
+        else None
+    )
 
     doc: Dict[str, Any] = {
         "timestamp": timestamp,
-        "@timestamp": (
-            datetime.fromtimestamp(timestamp, tz=timezone.utc).isoformat()
-            if isinstance(timestamp, (int, float))
-            else None
-        ),  # <-- ADDED
         "src_ip": None,
         "dst_ip": None,
         "src_port": None,
@@ -80,6 +76,6 @@ def packet_to_document(pkt: Any) -> Dict[str, Any]:
         else:
             doc["l4_protocol"] = "other"
 
-    # No IP layer (e.g., ARP) -> keep defaults + timestamp/length
+    
     return doc
 
