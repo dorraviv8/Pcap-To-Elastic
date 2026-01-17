@@ -1,7 +1,5 @@
 from prometheus_client import Counter
 
-# Counters required by the assignment
-
 pcap_packets_total = Counter(
     "pcap_packets_total",
     "Total number of processed packets by L4 protocol",
